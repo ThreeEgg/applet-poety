@@ -1,0 +1,52 @@
+<style lang="less">
+.video-box {
+  padding: 20rpx;
+  padding-top: 190rpx;
+  > video {
+    width: 100%;
+  }
+}
+</style>
+
+<template>
+  <div class="video-box">
+    <video
+      src="https://xgs.inter-credit.net:6443/video/01.mp4"
+      controls="true"
+      :direction="90"
+      autoplay="true"
+      enable-auto-rotation="true"
+      id="myvideo"
+    ></video>
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  config: {
+    navigationBarTitleText: 'test'
+  },
+
+  hooks: {},
+
+  data: {},
+
+  computed: {},
+
+  methods: {},
+
+  created() {},
+  ready() {
+    this.videoContext = wx.createVideoContext('myvideo', this);
+    this.videoContext.requestFullScreen({ direction: 90 });
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '古诗学习',
+    usingComponents: {}
+}
+</config>

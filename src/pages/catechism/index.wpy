@@ -1,0 +1,499 @@
+<style lang="less">
+.catechism-box {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  > image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  .content {
+    width: 100%;
+    min-height: 100%;
+    position: absolute;
+    padding: 20rpx;
+    padding-top: 180rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .content-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      .use {
+        writing-mode: vertical-lr;
+        letter-spacing: 16rpx;
+        border: 2rpx solid #ff0000;
+        border-radius: 16rpx;
+        color: #ff0000;
+        font-weight: 500;
+        padding: 20rpx 10rpx;
+        height: 236rpx;
+      }
+      > image {
+        margin-top: 24rpx;
+        width: 270rpx;
+        height: 380rpx;
+      }
+      .start-box {
+        display: flex;
+        height: 400rpx;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        > image {
+          width: 44rpx;
+          height: 44rpx;
+          margin-top: 10rpx;
+        }
+      }
+    }
+    .content-desc {
+      background: rgba(238, 238, 238, 0.8);
+      border-radius: 24rpx;
+      width: 100%;
+      height: 380rpx;
+      margin-top: 20rpx;
+      overflow-y: auto;
+      padding: 10rpx;
+      .desc-item {
+        margin-bottom: 20rpx;
+        border-radius: 18rpx;
+        color: #101010;
+        padding: 10rpx;
+        width: 100%;
+        background: rgba(221, 221, 221, 0.5);
+        border: 2rpx solid transparent;
+      }
+      .active {
+        border: 2rpx solid rgba(38, 151, 223, 0.8);
+        background: rgba(38, 151, 223, 0.1);
+      }
+    }
+    .content-btn-box {
+      position: absolute;
+      bottom: 12%;
+      .btn-item {
+        background: #009cff;
+        color: #ffffff;
+        padding: 26rpx 88rpx;
+        border-radius: 24rpx;
+        margin-top: 20rpx;
+        border: 2rpx solid transparent;
+      }
+      .btn-item-empty {
+        // background: #009cff;
+        // color: #ffffff;
+        padding: 26rpx 88rpx;
+        border-radius: 24rpx;
+        margin-top: 20rpx;
+        border: 2rpx solid transparent;
+        opacity: 0;
+      }
+      .btn-item-finish {
+        background: rgba(238, 238, 238, 0.8);
+        color: #009cff;
+        padding: 26rpx 88rpx;
+        border-radius: 24rpx;
+        margin-top: 20rpx;
+        border: 2rpx solid #009cff;
+      }
+      .termination {
+        color: #009cff;
+        margin-top: 20rpx;
+        text-align: center;
+      }
+    }
+  }
+  .bottom {
+    width: 100%;
+    position: absolute;
+    bottom: 4%;
+    text-align: center;
+    > image {
+      width: 100%;
+      height: 90rpx;
+    }
+    > .image-gif {
+      width: 18%;
+      height: 120rpx;
+      margin-right: 15rpx;
+    }
+  }
+  .bottom-gif {
+    bottom: 3%;
+  }
+}
+</style>
+
+<template>
+  <div class="catechism-box">
+    <image src="../../assets/images/home-bg.png" />
+    <div class="content">
+      <div class="content-top">
+        <div class="use">
+          内部试用
+        </div>
+        <image src="../../assets/images/people.png" />
+        <div class="start-box">
+          <image
+            src="../../assets/svg/start-active.svg"
+            v-for="i in current"
+            :key="i"
+          />
+          <image
+            src="../../assets/svg/start.svg"
+            v-for="i in (count-current)"
+            :key="i"
+          />
+        </div>
+      </div>
+      <div class="content-desc">
+        <div
+          v-for="(item,index) in contentArr"
+          :key="item"
+          :class="{'desc-item':true,active:index===0}"
+        >
+          {{item}}
+        </div>
+
+      </div>
+      <div class="content-btn-box">
+        <div
+          class="btn-item"
+          @tap="next"
+          v-if="(current<count || (current===count && isQuestion))&&isShow"
+        >{{isQuestion?'看答案':'继续挑战'}}</div>
+        <div
+          class="btn-item-empty"
+          v-else-if="!(current===count && !isQuestion)"
+        >
+          四个字占
+        </div>
+        <div
+          class="btn-item-finish"
+          v-if="current===count && !isQuestion"
+          @tap="terminate"
+        >
+          挑战完成
+        </div>
+        <div
+          class="termination"
+          v-if="current<count || (current===count && isQuestion)"
+          @tap="terminate"
+        >提前结束</div>
+      </div>
+    </div>
+    <div class="bottom">
+      <image src="../../assets/images/ripple.png" />
+    </div>
+    <div class="bottom bottom-gif">
+      <image
+        src="../../assets/images/gif.gif"
+        class="image-gif"
+      />
+    </div>
+    <audio
+      :src="src"
+      id="myAudio"
+    ></audio>
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import defaultText from '../../assets/js/defaultText';
+wepy.page({
+  config: {
+    navigationBarTitleText: 'test'
+  },
+
+  hooks: {},
+
+  data: {
+    count: 7,
+    current: 1,
+    isQuestion: true,
+    contentArr: [],
+    timeArr: [],
+    isShow: false,
+    src: null,
+    initTimes: 0,
+    totalTime: 0,
+    isBack: false
+  },
+
+  computed: {},
+
+  methods: {
+    next: function() {
+      this.isQuestion = !this.isQuestion;
+      // this.contentArr = this.contentArr.concat(['唐朝的']);
+      this.timeArr.push({
+        current: this.current,
+        time: new Date().getTime() - this.initTimes
+      });
+      if (this.isQuestion) {
+        this.current++;
+      }
+      this.initTimer();
+
+      this.contentArr = [
+        defaultText[this.current - 1].text[this.isQuestion ? 0 : 1]
+      ].concat(this.contentArr);
+      this.initAudioPlayer(
+        defaultText[this.current - 1].videoSrc[this.isQuestion ? 0 : 1]
+      );
+    },
+    terminate: function() {
+      this.audioStop();
+      this.stopRecord();
+      console.log('timeArr', this.timeArr);
+    },
+    formatDate: function(date) {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      const second = date.getSeconds();
+
+      return (
+        [year, month, day].map(this.formatNumber).join('-') +
+        ' ' +
+        [hour, minute, second].map(this.formatNumber).join(':')
+      );
+    },
+    formatNumber: function(n) {
+      n = n.toString();
+      return n[1] ? n : '0' + n;
+    },
+    initTimer: function() {
+      this.isShow = false;
+      if (this.timer) {
+        clearInterval(this.timer);
+      }
+      this.timer = setInterval(() => {
+        this.isShow = true;
+        console.log('1');
+      }, 2000);
+    },
+    initAudioPlayer: function(src) {
+      console.log('src', src);
+      if (this.audioCtx) {
+        this.audioStop();
+      }
+      this.audioCtx = wx.createInnerAudioContext('myAudio');
+      this.audioCtx.onPlay(() => {
+        console.log('开始播放');
+      });
+      this.audioCtx.onTimeUpdate(() => {
+        console.log(
+          'currentTime',
+          this.audioCtx.currentTime,
+          this.audioCtx.duration
+        );
+      });
+      this.audioCtx.onEnded(() => {
+        console.log('结束');
+      });
+      this.audioCtx.src = src;
+      this.audioCtx.play();
+    },
+    audioPlay: function() {
+      this.audioCtx.play();
+    },
+    audioPause: function() {
+      this.audioCtx.pause();
+    },
+    audioStop: function() {
+      this.audioCtx.stop();
+    },
+    startRecord: function() {
+      this.recorderManager = wx.getRecorderManager();
+      console.log('this.recorderManager', this.recorderManager);
+      this.recorderManager.onStart(() => {
+        console.log('recorder start');
+        this.initTimer();
+        this.initTimes = new Date().getTime();
+        /* this.timeArr.push({
+          current: this.current,
+          time: 0
+        }); */
+        this.initAudioPlayer(
+          defaultText[this.current - 1].videoSrc[this.isQuestion ? 0 : 1]
+        );
+      });
+      this.recorderManager.onPause(() => {
+        console.log('recorder pause');
+      });
+
+      this.recorderManager.onStop(res => {
+        console.log('recorder stop', res, res.tempFilePath);
+        const { tempFilePath } = res;
+        this.totalTime = new Date().getTime() - this.initTimes;
+        this.timeArr.push({
+          current: this.current,
+          time: this.totalTime
+        });
+
+        /* wx.getSavedFileList({
+          success: function(res) {
+            console.log('getSavedFileList-success', res);
+          },
+          fail: function(err) {
+            console.log('getSavedFileList-fail', err);
+          }
+        }); */
+        if (!this.isBack) {
+          this.submitInfo(tempFilePath);
+        }
+      });
+      this.recorderManager.onInterruptionEnd(res => {
+        console.log('打断结束', res);
+        this.recorderManager.resume();
+      });
+
+      const options = {
+        duration: 600000, // 录音时长ms，最大600000 十分钟
+        sampleRate: 16000, // 采样率
+        numberOfChannels: 1,
+        encodeBitRate: 24000,
+        format: 'mp3'
+      };
+      wx.authorize({
+        scope: 'scope.record',
+        success: res => {
+          console.log('authorize-res', res);
+          this.recorderManager.start(options);
+        },
+        fail: function(err) {
+          console.log('authorize-err', err);
+          wx.showModal({
+            title: '提示',
+            content: '您未授权录音，功能将无法使用',
+            showCancel: false,
+            success: function(res) {
+              wx.navigateTo({
+                url: '../home/index'
+              });
+            }
+          });
+        }
+      });
+    },
+    stopRecord: function() {
+      this.recorderManager.stop();
+    },
+    submitInfo: function(tempFilePath) {
+      console.log('this.timeArr', this.timeArr);
+      /* const timeArr = [
+        { current: 1, time: 10737 },
+        { current: 1, time: 20737 },
+        { current: 2, time: 30737 },
+        { current: 2, time: 40737 },
+        { current: 3, time: 50737 },
+        { current: 3, time: 60737 },
+        { current: 4, time: 70737 }
+      ]; */
+      if (this.timeArr.length % 2 === 1) {
+        this.timeArr.push({
+          current: this.timeArr[this.timeArr.length - 1].current,
+          time: 0
+        });
+      }
+      const steps = [];
+      this.timeArr.forEach(item => {
+        if (!steps.find(step => step.step === item.current)) {
+          steps.push({
+            step: item.current,
+            actionTime1: item.time
+          });
+        } else {
+          steps.forEach(step => {
+            if (step.step === item.current) {
+              step.actionTime2 = item.time;
+            }
+          });
+        }
+      });
+      const accessToken = wx.getStorageSync('accessToken');
+      console.log('steps', steps, accessToken);
+      wx.showLoading({ title: '请稍后…' });
+
+      wx.request({
+        url: 'https://xgs.inter-credit.net:6443/api/test/test-result',
+        data: {
+          totalTime: this.totalTime,
+          steps
+        },
+        header: {
+          Authorization: accessToken
+        },
+        method: 'POST',
+        success: function(res) {
+          console.log('数据提交-success', res);
+          const { statusCode, data } = res;
+          if (statusCode === 200) {
+            wx.uploadFile({
+              url: `https://xgs.inter-credit.net:6443/api/test/test-result/${
+                data.testId
+              }/voice`, //这是你自己后台的连接
+              filePath: tempFilePath,
+              name: 'file', //后台要绑定的名称
+              header: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: accessToken
+              },
+              success: function(res) {
+                console.log('uploadFile-success', res);
+                const { statusCode } = res;
+                if (statusCode === 200) {
+                  wx.hideLoading();
+                  wx.navigateTo({
+                    url: '../success/index'
+                  });
+                }
+              },
+              fail: function(err) {
+                console.log('uploadFile-fail', err);
+              }
+            });
+          }
+        },
+        fail: function(err) {
+          console.log('数据提交-fail', err);
+        }
+      });
+    }
+  },
+
+  created() {
+    this.contentArr = [defaultText[this.current - 1].text[0]];
+    console.log('created', defaultText, this.isBack);
+  },
+  ready() {
+    console.log('ready');
+
+    this.startRecord();
+  },
+  detached() {
+    this.isBack = true;
+    console.log('detached');
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.audioStop();
+    this.stopRecord();
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '古诗问答',
+    usingComponents: {}
+}
+</config>

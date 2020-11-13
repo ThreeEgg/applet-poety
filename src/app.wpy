@@ -1,0 +1,85 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+view,
+div {
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from '@wepy/core';
+import eventHub from './common/eventHub';
+
+wepy.app({
+  hooks: {
+    // App 级别 hook，对整个 App 生效
+    // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
+    'before-setData': function(dirty) {
+      return dirty;
+    }
+  },
+  globalData: {
+    userInfo: null
+  },
+
+  onLaunch() {
+    wx.login({
+      success: function(res) {
+        if (res.errMsg === 'login:ok') {
+          wx.request({
+            url: 'https://xgs.inter-credit.net:6443/api/user/login',
+            data: {
+              code: res.code
+            },
+            success: function(result) {
+              const { data, statusCode } = result;
+              if (statusCode === 200) {
+                wx.setStorageSync('accessToken', data.accessToken);
+              } else {
+                wx.showModal({
+                  title: '提示',
+                  content: '获取登陆授权失败',
+                  showCancel: false,
+                  success: function(res) {}
+                });
+              }
+            },
+            fall: function(err) {
+              console.log('code-fall', err);
+            }
+          });
+        }
+      },
+      fail: function(err) {
+        console.log('login-err', err);
+      }
+    });
+  },
+
+  methods: {}
+});
+</script>
+<config>
+{
+    pages: [
+      'pages/home/index',
+      'pages/video/index',
+      'pages/catechism/index',
+      'pages/success/index'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black',
+      navigationStyle:'custom'
+    }
+}
+</config>

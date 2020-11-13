@@ -1,0 +1,179 @@
+<style lang="less">
+.home {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  > image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  .content {
+    width: 100%;
+    min-height: 100%;
+    position: absolute;
+    padding: 48rpx;
+    padding-top: 145rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .content-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      .content-text {
+        > .text {
+          font-size: 54rpx;
+          color: #101010;
+          font-weight: 500;
+          margin-bottom: 16rpx;
+        }
+      }
+      .btn-box {
+        .btn-use {
+          margin-top: 30rpx;
+          border: 1rpx solid #ff0000;
+          color: #ff0000;
+          border-radius: 12rpx;
+          padding: 10rpx 20rpx;
+          font-weight: 600;
+          font-size: 28rpx;
+        }
+      }
+    }
+    .image-box {
+      width: 210px;
+      height: 201px;
+      margin-top: 20rpx;
+      > image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    > .btn-box {
+      padding-top: 110rpx;
+      position: absolute;
+      bottom: 16%;
+      .btn-item {
+        background: #009cff;
+        color: #ffffff;
+        padding: 0rpx 88rpx;
+        border-radius: 24rpx;
+        margin-top: 20rpx;
+      }
+    }
+    .desc {
+      margin-top: 30rpx;
+      display: flex;
+      position: absolute;
+      bottom: 5%;
+      > image {
+        width: 32rpx;
+        height: 32rpx;
+        margin-top: 6rpx;
+      }
+      > view {
+        color: #ff0000;
+        width: 86%;
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <div class="home">
+    <image src="../../assets/images/home-bg.png" />
+    <div class="content">
+      <div class="content-top">
+        <div class="content-text">
+          <div class="text">嗨，</div>
+          <div class="text">我是小墨，</div>
+          <div class="text">很高兴遇见你。</div>
+        </div>
+        <div class="btn-box">
+          <div class="btn-use">内部试用</div>
+        </div>
+      </div>
+      <div class="image-box">
+        <image src="../../assets/images/logo.png" />
+      </div>
+      <div class="btn-box">
+        <button
+          class="btn-item"
+          @tap="viewVideo"
+        >古诗学习</button>
+        <!-- <div class="btn-item">古诗背诵</div> -->
+        <button
+          class="btn-item"
+          @tap="viewCatechism"
+        >古诗问答</button>
+      </div>
+      <div class="desc">
+        <image src="../../assets/svg/dui.svg" />
+        <view>使用期间将全程录音，开始使用即代表同意将录音内容用于产品优化。</view>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  config: {
+    navigationBarTitleText: 'test'
+  },
+
+  hooks: {},
+
+  data: {},
+
+  computed: {},
+
+  methods: {
+    viewVideo: function() {
+      wx.navigateTo({
+        url: '../video/index'
+      });
+    },
+    viewCatechism: function() {
+      wx.navigateTo({
+        url: '../catechism/index'
+      });
+    },
+    bindGetUserInfo(e) {
+      console.log(e, e.target);
+      this.viewCatechism();
+    }
+  },
+
+  created() {
+    /* wx.getSetting({
+      success(res) {
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success: function(res) {
+              console.log('success', res);
+            },
+            fail: function(err) {
+              console.log('err', err);
+            }
+          });
+        } else {
+          console.log('authSetting', '用户信息失效');
+        }
+      }
+    }); */
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '',
+    usingComponents: {}
+}
+</config>

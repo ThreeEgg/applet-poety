@@ -1,0 +1,103 @@
+<style lang="less">
+.success-box {
+  min-height: 100vh;
+  position: relative;
+  > image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  .content {
+    width: 100%;
+    min-height: 100%;
+    position: absolute;
+    padding: 48rpx;
+    padding-top: 145rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .use {
+      writing-mode: vertical-lr;
+      letter-spacing: 16rpx;
+      border: 2rpx solid #ff0000;
+      border-radius: 16rpx;
+      color: #ff0000;
+      font-weight: 500;
+      padding: 20rpx 10rpx;
+      height: 236rpx;
+      position: absolute;
+      left: 48rpx;
+    }
+    .success {
+      color: #009cff;
+      font-size: 52rpx;
+      margin-top: 48rpx;
+    }
+    > image {
+      margin-top: 150rpx;
+      width: 290rpx;
+      height: 550rpx;
+    }
+    .btn {
+      background: rgba(238, 238, 238, 0.8);
+      color: #009cff;
+      padding: 26rpx 128rpx;
+      border-radius: 24rpx;
+      margin-top: 20rpx;
+      border: 2rpx solid #009cff;
+      position: absolute;
+      bottom: 12%;
+    }
+  }
+}
+</style>
+
+<template>
+  <div class="success-box">
+    <image src="../../assets/images/home-bg.png" />
+    <div class="content">
+      <div class="use">内部试用</div>
+      <div class="success">挑战完成</div>
+      <image src='../../assets/images/people-success.png' />
+      <div
+        class="btn"
+        @tap="viewHome"
+      >完成</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  config: {
+    navigationBarTitleText: 'test'
+  },
+
+  hooks: {},
+
+  data: {},
+
+  computed: {},
+
+  methods: {
+    viewHome: function() {
+      wx.navigateTo({
+        url: '../home/index'
+      });
+    }
+  },
+
+  created() {},
+  ready() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '',
+    usingComponents: {}
+}
+</config>
