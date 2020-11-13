@@ -102,7 +102,7 @@
         border: 2rpx solid #009cff;
       }
       .termination {
-        color: #009cff;
+        color: #999999;
         margin-top: 20rpx;
         text-align: center;
       }
